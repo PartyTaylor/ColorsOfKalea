@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Colors of Kalea</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #FFE4B5 0%, #FFDAB9 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            color: #FF6B35;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #FF6B35, #F7931E, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #8B4513;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .rainbow-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 40px auto;
+            height: 200px;
+        }
+
+        .rainbow {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .rainbow-band {
+            position: absolute;
+            width: 100%;
+            height: 40px;
+            border-radius: 200px 200px 0 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.9;
+        }
+
+        .rainbow-band:hover {
+            opacity: 1;
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .red { background: #FF0000; top: 0; }
+        .orange { background: #FF7F00; top: 20px; }
+        .yellow { background: #FFFF00; top: 40px; }
+        .green { background: #00FF00; top: 60px; }
+        .blue { background: #0000FF; top: 80px; }
+        .indigo { background: #4B0082; top: 100px; }
+        .violet { background: #9400D3; top: 120px; }
+
+        .image-space {
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            margin: 0 auto 40px auto;
+            border: 3px solid #FF6B35;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            font-size: 1.2rem;
+            color: #8B4513;
+            text-align: center;
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.2);
+        }
+
+        .slideshow-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            overflow: visible;
+        }
+
+        /* When slide contains an image, let it size naturally */
+        .slide:has(img) {
+            position: absolute;
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 100%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slide img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            border-radius: 12px;
+            border: 3px solid #FF6B35;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+            display: block;
+            margin: 0 auto;
+        }
+
+        .slide-placeholder {
+            background: linear-gradient(135deg, #FFE4B5 0%, #FFDAB9 50%, #FF6B35 100%);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #8B4513;
+            font-weight: bold;
+        }
+
+        .slide-number {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .slideshow-controls {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 107, 53, 0.8);
+        }
+
+        .dot.active {
+            background: #FF6B35;
+            transform: scale(1.2);
+            box-shadow: 0 0 10px rgba(255, 107, 53, 0.6);
+        }
+
+        .slide-caption {
+            position: absolute;
+            bottom: 50px;
+            left: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .prev-next-buttons {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 15px 12px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .prev-next-buttons:hover {
+            background: rgba(255, 107, 53, 0.8);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+
+        .celebration-text {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 40px 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .celebration-text h2 {
+            font-size: 2.5rem;
+            color: #FF6B35;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .celebration-text p {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            color: #654321;
+            margin-bottom: 15px;
+        }
+
+        .sparkles {
+            position: fixed;
+            pointer-events: none;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .sparkle {
+            position: absolute;
+            color: #FFD700;
+            animation: twinkle 2s infinite ease-in-out;
+            font-size: 20px;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 20px;
+            color: #8B4513;
+            font-style: italic;
+        }
+
+        /* Red page styles */
+        .back-button {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 240, 240, 0.95));
+            border: none;
+            border-radius: 60px;
+            padding: 15px 30px;
+            color: #DC143C;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(220, 20, 60, 0.15), 
+                        0 2px 10px rgba(0, 0, 0, 0.1),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s;
+        }
+
+        .back-button:hover::before {
+            left: 100%;
+        }
+
+        .back-button:hover {
+            background: linear-gradient(135deg, #DC143C, #FF1744);
+            color: white;
+            transform: scale(1.08) translateY(-2px);
+            box-shadow: 0 15px 35px rgba(220, 20, 60, 0.4), 
+                        0 5px 15px rgba(0, 0, 0, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .back-button:active {
+            transform: scale(1.02) translateY(0px);
+            transition: all 0.1s ease;
+        }
+
+        .red-container {
+            padding-top: 80px;
+        }
+
+        .red-title {
+            font-size: 4rem;
+            color: #B22222;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #FF0000, #DC143C, #B22222);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.3)); }
+            to { filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.6)); }
+        }
+
+        .red-subtitle {
+            font-size: 1.8rem;
+            color: #8B0000;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .content-grid {
+            display: flex;
+            justify-content: center;
+            margin: 40px 0;
+        }
+
+        .message-card {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(220, 20, 60, 0.3);
+            border-radius: 25px;
+            padding: 0;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            max-width: 900px;
+            width: 100%;
+            min-height: 350px;
+            box-shadow: 0 10px 30px rgba(220, 20, 60, 0.2);
+        }
+
+        .message-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 0, 0, 0.1), transparent);
+            transition: left 0.8s;
+        }
+
+        .message-card:hover::before {
+            left: 100%;
+        }
+
+        .message-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(220, 20, 60, 0.3);
+            border-color: rgba(220, 20, 60, 0.5);
+        }
+
+        .photo-section {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .photo-placeholder {
+            width: 100%;
+            height: 280px;
+            background: rgba(255, 255, 255, 0.4);
+            border: 3px dashed #DC143C;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8B0000;
+            font-size: 1.1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .photo-placeholder:hover {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: #FF1744;
+            transform: scale(1.02);
+        }
+
+        /* Auto-fitting image styles for photo placeholders */
+        .photo-placeholder {
+            width: 100%;
+            height: auto;
+            min-height: 280px;
+            background: rgba(255, 255, 255, 0.4);
+            border: 3px dashed #DC143C;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8B0000;
+            font-size: 1.1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: visible;
+        }
+
+        .photo-placeholder img {
+            max-width: 100%;
+            height: auto;
+            width: auto;
+            border-radius: 16px;
+            border: 3px solid;
+            border-color: inherit;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: block;
+            margin: 0;
+        }
+
+        /* When image is present, container adapts to image size */
+        .photo-placeholder:has(img) {
+            width: auto;
+            height: auto;
+            min-height: auto;
+            background: transparent;
+            border: none;
+            padding: 0;
+        }
+
+        /* Hide placeholder text when image is present */
+        .photo-placeholder:has(img) > div {
+            display: none;
+        }
+
+        .message-section {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(255, 240, 240, 0.3), rgba(255, 228, 225, 0.4));
+            border-radius: 0 25px 25px 0;
+        }
+
+        .message-content {
+            width: 100%;
+            text-align: center;
+        }
+
+        .message-title {
+            font-size: 2rem;
+            color: #DC143C;
+            margin-bottom: 25px;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(220, 20, 60, 0.2);
+        }
+
+        .message-text {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #B22222;
+            margin-bottom: 30px;
+            line-height: 1.4;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(45deg, #DC143C, #FF1744, #DC143C);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes textGlow {
+            from { filter: drop-shadow(0 0 5px rgba(220, 20, 60, 0.3)); }
+            to { filter: drop-shadow(0 0 15px rgba(220, 20, 60, 0.6)); }
+        }
+
+        .message-signature {
+            font-size: 1.2rem;
+            color: #8B0000;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .message-card {
+                flex-direction: column;
+                max-width: 100%;
+            }
+            
+            .photo-section {
+                padding: 20px;
+            }
+            
+            .photo-placeholder {
+                height: 200px;
+            }
+            
+            .message-section {
+                padding: 30px 20px;
+                border-radius: 0 0 25px 25px;
+                background: linear-gradient(180deg, rgba(255, 240, 240, 0.3), rgba(255, 228, 225, 0.4));
+            }
+            
+            .message-title {
+                font-size: 1.5rem;
+            }
+            
+            .message-text {
+                font-size: 1.4rem;
+            }
+        }
+
+        .quote-section {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            margin: 40px 0;
+            border: 2px solid rgba(220, 20, 60, 0.3);
+        }
+
+        .quote {
+            font-size: 1.5rem;
+            font-style: italic;
+            color: #B22222;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .quote-author {
+            font-size: 1.2rem;
+            color: #8B0000;
+            font-weight: bold;
+        }
+
+        .heart {
+            position: absolute;
+            color: rgba(220, 20, 60, 0.6);
+            animation: float 4s infinite ease-in-out;
+            font-size: 24px;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                opacity: 0; 
+                transform: translateY(100vh) scale(0.5) rotate(0deg); 
+            }
+            10% { 
+                opacity: 1; 
+            }
+            90% { 
+                opacity: 1; 
+            }
+            100% { 
+                opacity: 0; 
+                transform: translateY(-100px) scale(1) rotate(360deg); 
+            }
+        }
+
+        #floating-hearts-red {
+            position: fixed;
+            pointer-events: none;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        /* Universal color page styles */
+        .floating-elements {
+            position: fixed;
+            pointer-events: none;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .floating-element {
+            position: absolute;
+            animation: float 4s infinite ease-in-out;
+            font-size: 24px;
+            pointer-events: none;
+        }
+
+        .color-container {
+            padding-top: 80px;
+        }
+
+        .color-title {
+            font-size: 4rem;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            font-weight: bold;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        .color-subtitle {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        /* Red styles */
+        .red-title {
+            color: #B22222;
+            background: linear-gradient(45deg, #FF0000, #DC143C, #B22222);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .red-subtitle { color: #8B0000; }
+        .red-back-button { border-color: #DC143C; color: #DC143C; }
+        .red-back-button:hover { background: linear-gradient(135deg, #DC143C, #FF1744); }
+        .red-message-card { border-color: rgba(220, 20, 60, 0.3); }
+        .red-photo-placeholder { border-color: #DC143C; }
+        .red-photo-placeholder:hover { border-color: #FF1744; }
+        .red-photo-placeholder img { border-color: #DC143C; }
+        .red-message-section { background: linear-gradient(135deg, rgba(255, 240, 240, 0.3), rgba(255, 228, 225, 0.4)); }
+        .red-quote-section { border-color: rgba(220, 20, 60, 0.3); }
+        .red-signature { color: #DC143C; }
+
+        /* Orange styles */
+        .orange-title {
+            color: #FF8C00;
+            background: linear-gradient(45deg, #FF7F00, #FF8C00, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .orange-subtitle { color: #CC7000; }
+        .orange-back-button { border-color: #FF8C00; color: #FF8C00; }
+        .orange-back-button:hover { background: linear-gradient(135deg, #FF8C00, #FFA500); }
+        .orange-message-card { border-color: rgba(255, 140, 0, 0.3); }
+        .orange-photo-placeholder { border-color: #FF8C00; }
+        .orange-photo-placeholder:hover { border-color: #FFA500; }
+        .orange-photo-placeholder img { border-color: #FF8C00; }
+        .orange-message-section { background: linear-gradient(135deg, rgba(255, 248, 220, 0.3), rgba(255, 235, 205, 0.4)); }
+        .orange-quote-section { border-color: rgba(255, 140, 0, 0.3); }
+        .orange-signature { color: #FF8C00; }
+        .orange-message-text {
+            background: linear-gradient(45deg, #FF8C00, #FFA500, #FF8C00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Yellow styles */
+        .yellow-title {
+            color: #DAA520;
+            background: linear-gradient(45deg, #FFD700, #FFFF00, #DAA520);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .yellow-subtitle { color: #B8860B; }
+        .yellow-back-button { border-color: #FFD700; color: #DAA520; }
+        .yellow-back-button:hover { background: linear-gradient(135deg, #FFD700, #FFFF00); }
+        .yellow-message-card { border-color: rgba(255, 215, 0, 0.3); }
+        .yellow-photo-placeholder { border-color: #FFD700; }
+        .yellow-photo-placeholder:hover { border-color: #FFFF00; }
+        .yellow-photo-placeholder img { border-color: #FFD700; }
+        .yellow-message-section { background: linear-gradient(135deg, rgba(255, 250, 205, 0.3), rgba(255, 255, 224, 0.4)); }
+        .yellow-quote-section { border-color: rgba(255, 215, 0, 0.3); }
+        .yellow-signature { color: #DAA520; }
+        .yellow-message-text {
+            background: linear-gradient(45deg, #FFD700, #FFFF00, #DAA520);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Green styles */
+        .green-title {
+            color: #228B22;
+            background: linear-gradient(45deg, #00FF00, #32CD32, #228B22);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .green-subtitle { color: #006400; }
+        .green-back-button { border-color: #32CD32; color: #228B22; }
+        .green-back-button:hover { background: linear-gradient(135deg, #32CD32, #00FF00); }
+        .green-message-card { border-color: rgba(50, 205, 50, 0.3); }
+        .green-photo-placeholder { border-color: #32CD32; }
+        .green-photo-placeholder:hover { border-color: #00FF00; }
+        .green-photo-placeholder img { border-color: #32CD32; }
+        .green-message-section { background: linear-gradient(135deg, rgba(240, 255, 240, 0.3), rgba(220, 255, 220, 0.4)); }
+        .green-quote-section { border-color: rgba(50, 205, 50, 0.3); }
+        .green-signature { color: #228B22; }
+        .green-message-text {
+            background: linear-gradient(45deg, #32CD32, #00FF00, #228B22);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Blue styles */
+        .blue-title {
+            color: #1E90FF;
+            background: linear-gradient(45deg, #0000FF, #1E90FF, #4169E1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .blue-subtitle { color: #000080; }
+        .blue-back-button { border-color: #1E90FF; color: #1E90FF; }
+        .blue-back-button:hover { background: linear-gradient(135deg, #1E90FF, #0000FF); }
+        .blue-message-card { border-color: rgba(30, 144, 255, 0.3); }
+        .blue-photo-placeholder { border-color: #1E90FF; }
+        .blue-photo-placeholder:hover { border-color: #0000FF; }
+        .blue-photo-placeholder img { border-color: #1E90FF; }
+        .blue-message-section { background: linear-gradient(135deg, rgba(230, 243, 255, 0.3), rgba(220, 240, 255, 0.4)); }
+        .blue-quote-section { border-color: rgba(30, 144, 255, 0.3); }
+        .blue-signature { color: #1E90FF; }
+        .blue-message-text {
+            background: linear-gradient(45deg, #1E90FF, #0000FF, #4169E1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Indigo styles */
+        .indigo-title {
+            color: #4B0082;
+            background: linear-gradient(45deg, #4B0082, #6A0DAD, #8A2BE2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .indigo-subtitle { color: #2E0056; }
+        .indigo-back-button { border-color: #4B0082; color: #4B0082; }
+        .indigo-back-button:hover { background: linear-gradient(135deg, #4B0082, #6A0DAD); }
+        .indigo-message-card { border-color: rgba(75, 0, 130, 0.3); }
+        .indigo-photo-placeholder { border-color: #4B0082; }
+        .indigo-photo-placeholder:hover { border-color: #6A0DAD; }
+        .indigo-photo-placeholder img { border-color: #4B0082; }
+        .indigo-message-section { background: linear-gradient(135deg, rgba(230, 230, 250, 0.3), rgba(220, 220, 245, 0.4)); }
+        .indigo-quote-section { border-color: rgba(75, 0, 130, 0.3); }
+        .indigo-signature { color: #4B0082; }
+        .indigo-message-text {
+            background: linear-gradient(45deg, #4B0082, #6A0DAD, #8A2BE2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Violet styles */
+        .violet-title {
+            color: #8A2BE2;
+            background: linear-gradient(45deg, #9400D3, #8A2BE2, #9932CC);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .violet-subtitle { color: #4B0082; }
+        .violet-back-button { border-color: #8A2BE2; color: #8A2BE2; }
+        .violet-back-button:hover { background: linear-gradient(135deg, #8A2BE2, #9400D3); }
+        .violet-message-card { border-color: rgba(138, 43, 226, 0.3); }
+        .violet-photo-placeholder { border-color: #8A2BE2; }
+        .violet-photo-placeholder:hover { border-color: #9400D3; }
+        .violet-photo-placeholder img { border-color: #8A2BE2; }
+        .violet-message-section { background: linear-gradient(135deg, rgba(248, 240, 255, 0.3), rgba(245, 230, 255, 0.4)); }
+        .violet-quote-section { border-color: rgba(138, 43, 226, 0.3); }
+        .violet-signature { color: #8A2BE2; }
+        .violet-message-text {
+            background: linear-gradient(45deg, #8A2BE2, #9400D3, #9932CC);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .subtitle { font-size: 1.2rem; }
+            .celebration-text h2 { font-size: 2rem; }
+            .celebration-text p { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="sparkles" id="sparkles"></div>
+    
+    <div class="container">
+        <header>
+            <h1>The Colors of Kalea</h1>
+            <p class="subtitle">Celebrating a Quarter Century of Vibrant Life! 🎉</p>
+        </header>
+
+        <div class="rainbow-container">
+            <div class="rainbow">
+                <div class="rainbow-band red" onclick="navigateToColor('red')" title="Click for Red Page"></div>
+                <div class="rainbow-band orange" onclick="navigateToColor('orange')" title="Click for Orange Page"></div>
+                <div class="rainbow-band yellow" onclick="navigateToColor('yellow')" title="Click for Yellow Page"></div>
+                <div class="rainbow-band green" onclick="navigateToColor('green')" title="Click for Green Page"></div>
+                <div class="rainbow-band blue" onclick="navigateToColor('blue')" title="Click for Blue Page"></div>
+                <div class="rainbow-band indigo" onclick="navigateToColor('indigo')" title="Click for Indigo Page"></div>
+                <div class="rainbow-band violet" onclick="navigateToColor('violet')" title="Click for Violet Page"></div>
+            </div>
+        </div>
+
+        <div class="image-space">
+            <div class="slideshow-container" id="slideshow">
+                <div class="slide active">
+                    <div class="slide-placeholder">
+                        <p>📸 Photo Slot 1</p>
+                        <p style="font-size: 0.9rem; opacity: 0.7; margin-top: 10px;">Add your favorite memory here</p>
+                    </div>
+                    <div class="slide-caption">Kalea's Amazing Journey - Memory 1</div>
+                    <div class="slide-number">1 / 5</div>
+                </div>
+                
+                <div class="slide">
+                    <div class="slide-placeholder">
+                        <p>📷 Photo Slot 2</p>
+                        <p style="font-size: 0.9rem; opacity: 0.7; margin-top: 10px;">Another beautiful moment</p>
+                    </div>
+                    <div class="slide-caption">25 Years of Wonderful Memories - Memory 2</div>
+                    <div class="slide-number">2 / 5</div>
+                </div>
+                
+                <div class="slide">
+                    <div class="slide-placeholder">
+                        <p>🎂 Photo Slot 3</p>
+                        <p style="font-size: 0.9rem; opacity: 0.7; margin-top: 10px;">Special celebration</p>
+                    </div>
+                    <div class="slide-caption">Celebrating Life's Special Moments - Memory 3</div>
+                    <div class="slide-number">3 / 5</div>
+                </div>
+                
+                <div class="slide">
+                    <div class="slide-placeholder">
+                        <p>🌟 Photo Slot 4</p>
+                        <p style="font-size: 0.9rem; opacity: 0.7; margin-top: 10px;">Shining bright moment</p>
+                    </div>
+                    <div class="slide-caption">Kalea Shining Bright - Memory 4</div>
+                    <div class="slide-number">4 / 5</div>
+                </div>
+                
+                <div class="slide">
+                    <div class="slide-placeholder">
+                        <p>💕 Photo Slot 5</p>
+                        <p style="font-size: 0.9rem; opacity: 0.7; margin-top: 10px;">Love and happiness</p>
+                    </div>
+                    <div class="slide-caption">Surrounded by Love - Memory 5</div>
+                    <div class="slide-number">5 / 5</div>
+                </div>
+                
+                <button class="prev-next-buttons prev" onclick="changeSlide(-1)">❮</button>
+                <button class="prev-next-buttons next" onclick="changeSlide(1)">❯</button>
+                
+                <div class="slideshow-controls">
+                    <span class="dot active" onclick="currentSlide(1)"></span>
+                    <span class="dot" onclick="currentSlide(2)"></span>
+                    <span class="dot" onclick="currentSlide(3)"></span>
+                    <span class="dot" onclick="currentSlide(4)"></span>
+                    <span class="dot" onclick="currentSlide(5)"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="celebration-text">
+            <h2>Happy 25th Birthday Kalea! ✨</h2>
+            <p>Welcome to a celebration of your birthday and life through key memories and messages from the people that love you!</p>
+            <p>Click on any color in the rainbow to explore the people who have chosen that color to represent their connection to you.</p>
+            <p>Here's to the next 25 years being even more vibrant! 🌈🎂</p>
+        </div>
+
+        <div class="spotify-section">
+            <h3 style="text-align: center; color: #FF6B35; margin-bottom: 20px;">Kalea's Birthday Playlist</h3>
+            <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/7KHExhLhiRBpjnB9Cmk1Nf?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Made with love for Kalea's 25th Birthday ~ Taylor Jones Boyfriend💕</p>
+    </div>
+
+    <script>
+        // Function to handle rainbow color clicks
+        function navigateToColor(color) {
+            showColorPage(color);
+        }
+
+        // Function to display any color page
+        function showColorPage(color) {
+            // Hide main content
+            document.querySelector('.container').style.display = 'none';
+            
+            const colorData = getColorData(color);
+            
+            // Create color page content
+            const colorPageHTML = `
+                <div class="floating-elements" id="floating-elements-${color}"></div>
+                
+                <button onclick="showMainPage()" class="back-button ${color}-back-button">← Back to Rainbow</button>
+                
+                <div class="container color-container ${color}-container">
+                    <header>
+                        <h1 class="color-title ${color}-title">${colorData.name}</h1>
+                        <p class="color-subtitle ${color}-subtitle">${colorData.subtitle}</p>
+                    </header>
+
+                    <div class="quote-section ${color}-quote-section">
+                        <p class="quote">${colorData.quote}</p>
+                        <p class="quote-author">${colorData.quoteAuthor}</p>
+                    </div>
+
+                    <div class="content-grid">
+                        <div class="message-card ${color}-message-card">
+                            <div class="photo-section">
+                                <div class="photo-placeholder ${color}-photo-placeholder">
+                                    <div>
+                                        <p>📸 Your Photo Here</p>
+                                        <p style="font-size: 0.9rem; opacity: 0.7; margin-top: 10px;">Upload your ${color} memory</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="message-section ${color}-message-section">
+                                <div class="message-content">
+                                    <h3 class="message-title">${colorData.messageIcon} A Special Message</h3>
+                                    <p class="message-text ${color}-message-text">${colorData.message}</p>
+                                    <div class="message-signature">
+                                        <p>With all our love,</p>
+                                        <p style="font-weight: bold; margin-top: 5px;" class="${color}-signature">Your Amazing Friends & Family ${colorData.signatureIcon}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quote-section ${color}-quote-section">
+                        <p class="quote">${colorData.birthdayQuote}</p>
+                        <p class="quote-author">Happy Birthday, Kalea! 🎂</p>
+                    </div>
+                </div>
+            `;
+            
+            // Add color page content to body
+            document.body.insertAdjacentHTML('beforeend', colorPageHTML);
+            
+            // Change background
+            document.body.style.background = colorData.background;
+            
+            // Start floating animation
+            createFloatingElements(color);
+        }
+
+        // Get color-specific data
+        function getColorData(color) {
+            const colorThemes = {
+                red: {
+                    name: 'Red',
+                    subtitle: 'Passion • Love • Energy • Strength',
+                    quote: '"Red is not just a color, it\'s an attitude. It\'s the fire in your heart and the courage in your soul."',
+                    quoteAuthor: '- Celebrating Kalea\'s Passionate Spirit',
+                    message: 'WOOT KALEA WE LOVE YOU!',
+                    messageIcon: '❤️',
+                    signatureIcon: '💕',
+                    birthdayQuote: '"Here\'s to 25 years of living boldly, loving deeply, and painting the world with your unique shade of red!"',
+                    background: 'linear-gradient(135deg, #FFE4E1 0%, #FFA07A 50%, #FF6347 100%)',
+                    elements: ['❤️', '💖', '💕', '💗', '🌹']
+                },
+                orange: {
+                    name: 'Orange',
+                    subtitle: 'Creativity • Joy • Enthusiasm • Adventure',
+                    quote: '"Orange is the color of creativity and adventure. It\'s the warmth of the sun and the spark of inspiration."',
+                    quoteAuthor: '- Celebrating Kalea\'s Creative Spirit',
+                    message: 'KALEA, YOU LIGHT UP OUR WORLD!',
+                    messageIcon: '🧡',
+                    signatureIcon: '🌟',
+                    birthdayQuote: '"Here\'s to 25 years of bringing sunshine and creativity wherever you go!"',
+                    background: 'linear-gradient(135deg, #FFF8DC 0%, #FFE4B5 50%, #FF8C00 100%)',
+                    elements: ['🧡', '🌅', '🔥', '🌻', '🊊']
+                },
+                yellow: {
+                    name: 'Yellow',
+                    subtitle: 'Happiness • Optimism • Intelligence • Friendship',
+                    quote: '"Yellow is the color of sunshine and happiness. It\'s the brightness that lifts spirits and spreads joy."',
+                    quoteAuthor: '- Celebrating Kalea\'s Bright Spirit',
+                    message: 'SUNSHINE KALEA, YOU\'RE AMAZING!',
+                    messageIcon: '💛',
+                    signatureIcon: '☀️',
+                    birthdayQuote: '"Here\'s to 25 years of spreading sunshine and joy to everyone around you!"',
+                    background: 'linear-gradient(135deg, #FFFACD 0%, #FFFF99 50%, #FFD700 100%)',
+                    elements: ['💛', '☀️', '🌟', '⭐', '🌻']
+                },
+                green: {
+                    name: 'Green',
+                    subtitle: 'Growth • Nature • Harmony • Fresh Beginnings',
+                    quote: '"Green is the color of life and growth. It\'s the fresh start of spring and the promise of new adventures."',
+                    quoteAuthor: '- Celebrating Kalea\'s Growing Spirit',
+                    message: 'KALEA, YOU HELP US ALL GROW!',
+                    messageIcon: '💚',
+                    signatureIcon: '🌱',
+                    birthdayQuote: '"Here\'s to 25 years of growing into the amazing person you are, with so much more to come!"',
+                    background: 'linear-gradient(135deg, #F0FFF0 0%, #90EE90 50%, #32CD32 100%)',
+                    elements: ['💚', '🌱', '🍃', '🌿', '🌳']
+                },
+                blue: {
+                    name: 'Blue',
+                    subtitle: 'Peace • Trust • Wisdom • Serenity',
+                    quote: '"Blue is the color of calm seas and endless skies. It\'s the peace that comes from knowing you\'re loved."',
+                    quoteAuthor: '- Celebrating Kalea\'s Peaceful Spirit',
+                    message: 'KALEA, YOU BRING US PEACE!',
+                    messageIcon: '💙',
+                    signatureIcon: '🌊',
+                    birthdayQuote: '"Here\'s to 25 years of bringing calm wisdom and trust to all your relationships!"',
+                    background: 'linear-gradient(135deg, #E6F3FF 0%, #87CEEB 50%, #4169E1 100%)',
+                    elements: ['💙', '🌊', '💧', '🐋', '⭐']
+                },
+                indigo: {
+                    name: 'Indigo',
+                    subtitle: 'Intuition • Mystery • Spirituality • Deep Thoughts',
+                    quote: '"Indigo is the color of deep intuition and inner wisdom. It\'s the mystery of twilight and the depth of dreams."',
+                    quoteAuthor: '- Celebrating Kalea\'s Intuitive Spirit',
+                    message: 'KALEA, YOUR WISDOM INSPIRES US!',
+                    messageIcon: '💜',
+                    signatureIcon: '🔮',
+                    birthdayQuote: '"Here\'s to 25 years of following your intuition and inspiring others with your depth!"',
+                    background: 'linear-gradient(135deg, #E6E6FA 0%, #9370DB 50%, #4B0082 100%)',
+                    elements: ['💜', '🔮', '✨', '🌙', '⭐']
+                },
+                violet: {
+                    name: 'Violet',
+                    subtitle: 'Magic • Imagination • Royalty • Transformation',
+                    quote: '"Violet is the color of magic and transformation. It\'s the royal purple of dreams coming true."',
+                    quoteAuthor: '- Celebrating Kalea\'s Magical Spirit',
+                    message: 'MAGICAL KALEA, YOU\'RE ROYALTY!',
+                    messageIcon: '💜',
+                    signatureIcon: '👑',
+                    birthdayQuote: '"Here\'s to 25 years of magical moments and the royal treatment you deserve!"',
+                    background: 'linear-gradient(135deg, #F8F0FF 0%, #DDA0DD 50%, #8A2BE2 100%)',
+                    elements: ['💜', '👑', '✨', '🦄', '🌟']
+                }
+            };
+            
+            return colorThemes[color];
+        }
+
+        // Function to go back to main page
+        function showMainPage() {
+            // Remove color page content
+            const colorContainer = document.querySelector('.color-container');
+            const backButton = document.querySelector('.back-button');
+            const floatingElements = document.querySelector('[id^="floating-elements-"]');
+            
+            if (colorContainer) colorContainer.remove();
+            if (backButton) backButton.remove();
+            if (floatingElements) floatingElements.remove();
+            
+            // Show main content
+            document.querySelector('.container').style.display = 'block';
+            
+            // Restore original background
+            document.body.style.background = 'linear-gradient(135deg, #FFE4B5 0%, #FFDAB9 100%)';
+        }
+
+        // Create floating elements for each color page
+        function createFloatingElements(color) {
+            const elementsContainer = document.getElementById(`floating-elements-${color}`);
+            if (!elementsContainer) return;
+            
+            const colorData = getColorData(color);
+            const elements = colorData.elements;
+            let activeElements = 0;
+            const maxElements = 6;
+            
+            const elementInterval = setInterval(() => {
+                if (!document.getElementById(`floating-elements-${color}`)) {
+                    clearInterval(elementInterval);
+                    return;
+                }
+                
+                if (activeElements < maxElements) {
+                    const element = document.createElement('div');
+                    element.className = 'floating-element';
+                    element.innerHTML = elements[Math.floor(Math.random() * elements.length)];
+                    element.style.left = Math.random() * 90 + 5 + '%';
+                    element.style.animationDelay = Math.random() * 1 + 's';
+                    element.style.animationDuration = (4 + Math.random() * 2) + 's';
+                    elementsContainer.appendChild(element);
+                    activeElements++;
+                    
+                    setTimeout(() => {
+                        if (element.parentNode) {
+                            element.parentNode.removeChild(element);
+                            activeElements--;
+                        }
+                    }, 6000);
+                }
+            }, 1200);
+        }
+
+        // Create floating sparkles
+        function createSparkles() {
+            const sparklesContainer = document.getElementById('sparkles');
+            const sparkleSymbols = ['✨', '⭐', '🌟', '💫', '⚡'];
+            
+            for (let i = 0; i < 15; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.innerHTML = sparkleSymbols[Math.floor(Math.random() * sparkleSymbols.length)];
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = Math.random() * 2 + 's';
+                sparklesContainer.appendChild(sparkle);
+            }
+        }
+
+        // Initialize sparkles when page loads
+        window.addEventListener('load', function() {
+            createSparkles();
+            initializeSlideshow();
+        });
+
+        // Slideshow functionality
+        let slideIndex = 0;
+        let slideInterval;
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+        const totalSlides = slides.length;
+
+        function initializeSlideshow() {
+            startAutoSlide();
+        }
+
+        function showSlide(index) {
+            // Hide all slides
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            // Show current slide
+            if (slides[index]) {
+                slides[index].classList.add('active');
+                dots[index].classList.add('active');
+            }
+        }
+
+        function nextSlide() {
+            slideIndex = (slideIndex + 1) % totalSlides;
+            showSlide(slideIndex);
+        }
+
+        function changeSlide(direction) {
+            slideIndex = (slideIndex + direction + totalSlides) % totalSlides;
+            showSlide(slideIndex);
+            resetAutoSlide();
+        }
+
+        function currentSlide(index) {
+            slideIndex = index - 1;
+            showSlide(slideIndex);
+            resetAutoSlide();
+        }
+
+        function startAutoSlide() {
+            slideInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
+        }
+
+        function resetAutoSlide() {
+            clearInterval(slideInterval);
+            startAutoSlide();
+        }
+
+        // Pause slideshow on hover
+        document.querySelector('.slideshow-container').addEventListener('mouseenter', function() {
+            clearInterval(slideInterval);
+        });
+
+        // Resume slideshow when mouse leaves
+        document.querySelector('.slideshow-container').addEventListener('mouseleave', function() {
+            startAutoSlide();
+        });
+
+        // Add some interactive effects
+        document.querySelectorAll('.rainbow-band').forEach(band => {
+            band.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05) translateY(-2px)';
+            });
+            
+            band.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1) translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>

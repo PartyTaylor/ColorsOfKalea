@@ -1047,7 +1047,7 @@
                             <div class="message-card ${color}-message-card">
                                 <div class="photo-section">
                                     <div class="photo-placeholder ${color}-photo-placeholder">
-                                        <img src="${match.photo}" alt="${match.name}'s ${color} Memory" />
+                                        <img src="${match.photo}" alt="${match.name}'s ${color} Memory" onerror="if (!this.dataset.jpegTried) { this.src=this.src.replace(/\.jpg$/i, '.jpeg'); this.dataset.jpegTried='1'; } else if (!this.dataset.jpgTried) { this.src=this.src.replace(/\.jpeg$/i, '.jpg'); this.dataset.jpgTried='1'; }" />
                                     </div>
                                 </div>
                                 <div class="message-section ${color}-message-section">
@@ -1078,7 +1078,7 @@
                                 </div>
                                 <div class="photo-section">
                                     <div class="photo-placeholder ${color}-photo-placeholder">
-                                        <img src="${match.photo}" alt="${match.name}'s ${color} Memory" />
+                                        <img src="${match.photo}" alt="${match.name}'s ${color} Memory" onerror="if (!this.dataset.jpegTried) { this.src=this.src.replace(/\.jpg$/i, '.jpeg'); this.dataset.jpegTried='1'; } else if (!this.dataset.jpgTried) { this.src=this.src.replace(/\.jpeg$/i, '.jpg'); this.dataset.jpgTried='1'; }" />
                                     </div>
                                 </div>
                             </div>

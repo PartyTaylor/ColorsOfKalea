@@ -960,8 +960,8 @@
     <script>
         // Add photoCount for each person (default 1 if not specified)
         const photoFolders = [
-            { name: "Mai", color: "photos/Mai/Color", message: "photos/Mai/Message", photoCount: 4 },
-            { name: "Dave", color: "photos/Dave/Color", message: "photos/Dave/Message", photoCount: 1 },
+            { name: "Mai", color: "photos/Mai/Color", message: "photos/Mai/Message", photoCount: 3 },
+            { name: "Dave", color: "photos/Dave/Color", message: "photos/Dave/Message", photoCount: 2 },
             { name: "Drew", color: "photos/Drew/Color", message: "photos/Drew/Message", photoCount: 1 },
             { name: "Jenny", color: "photos/Jenny/Color", message: "photos/Jenny/Message", photoCount: 1 },
             { name: "Joe", color: "photos/Joe/Color", message: "photos/Joe/Message", photoCount: 1 },
@@ -1046,25 +1046,27 @@
                     let slideshowHTML = '';
                     if (photoCount > 1) {
                         slideshowHTML = `
-                            <div class="person-slideshow-container">
-                                ${Array.from({length: photoCount}).map((_, i) => `
-                                    <div class="person-slide${i === 0 ? ' active' : ''}">
-                                        <img src="photos/${match.name}/${i+1}.jpg" alt="${match.name} photo ${i+1}" onerror="if (!this.dataset.jpegTried) { this.src=this.src.replace(/\.jpg$/i, '.jpeg'); this.dataset.jpegTried='1'; } else if (!this.dataset.jpgTried) { this.src=this.src.replace(/\.jpeg$/i, '.jpg'); this.dataset.jpgTried='1'; }" />
-                                    </div>
-                                `).join('')}
-                                <button class="person-prev-next person-prev" onclick="changePersonSlide(this, -1)">❮</button>
-                                <button class="person-prev-next person-next" onclick="changePersonSlide(this, 1)">❯</button>
-                                <div class="person-slideshow-controls">
+                            <div class="photo-placeholder ${color}-photo-placeholder" style="padding:0; background:transparent; border:none; min-height:0;">
+                                <div class="person-slideshow-container" style="width:100%; position:relative;">
                                     ${Array.from({length: photoCount}).map((_, i) => `
-                                        <span class="person-dot${i === 0 ? ' active' : ''}" onclick="currentPersonSlide(this, ${i+1})"></span>
+                                        <div class="person-slide${i === 0 ? ' active' : ''}" style="display:${i === 0 ? 'flex' : 'none'}; align-items:center; justify-content:center; width:100%; height:auto;">
+                                            <img src="photos/${match.name}/${i+1}.jpg" alt="${match.name} photo ${i+1}" onerror="if (!this.dataset.jpegTried) { this.src=this.src.replace(/\\.jpg$/i, '.jpeg'); this.dataset.jpegTried='1'; } else if (!this.dataset.jpgTried) { this.src=this.src.replace(/\\.jpeg$/i, '.jpg'); this.dataset.jpgTried='1'; }" style="max-width:100%; max-height:280px; border-radius:16px; border:3px solid; border-color:inherit; box-shadow:0 4px 15px rgba(0,0,0,0.2);" />
+                                        </div>
                                     `).join('')}
+                                    <button class="person-prev-next person-prev" onclick="changePersonSlide(this, -1)" style="position:absolute; left:10px; top:50%; transform:translateY(-50%);">❮</button>
+                                    <button class="person-prev-next person-next" onclick="changePersonSlide(this, 1)" style="position:absolute; right:10px; top:50%; transform:translateY(-50%);">❯</button>
+                                    <div class="person-slideshow-controls" style="position:absolute; bottom:10px; left:50%; transform:translateX(-50%); display:flex; gap:8px;">
+                                        ${Array.from({length: photoCount}).map((_, i) => `
+                                            <span class="person-dot${i === 0 ? ' active' : ''}" onclick="currentPersonSlide(this, ${i+1})" style="width:12px; height:12px; border-radius:50%; background:rgba(255,255,255,0.5); border:2px solid rgba(255,107,53,0.8); cursor:pointer; margin:0 2px; display:inline-block;"></span>
+                                        `).join('')}
+                                    </div>
                                 </div>
                             </div>
                         `;
                     } else {
                         slideshowHTML = `
                             <div class="photo-placeholder ${color}-photo-placeholder">
-                                <img src="photos/${match.name}/1.jpg" alt="${match.name}'s ${color} Memory" onerror="if (!this.dataset.jpegTried) { this.src=this.src.replace(/\.jpg$/i, '.jpeg'); this.dataset.jpegTried='1'; } else if (!this.dataset.jpgTried) { this.src=this.src.replace(/\.jpeg$/i, '.jpg'); this.dataset.jpgTried='1'; }" />
+                                <img src="photos/${match.name}/1.jpg" alt="${match.name}'s ${color} Memory" onerror="if (!this.dataset.jpegTried) { this.src=this.src.replace(/\\.jpg$/i, '.jpeg'); this.dataset.jpegTried='1'; } else if (!this.dataset.jpgTried) { this.src=this.src.replace(/\\.jpeg$/i, '.jpg'); this.dataset.jpgTried='1'; }" />
                             </div>
                         `;
                     }
@@ -1109,7 +1111,7 @@
                     }
                 }).join('');
             } else {
-        // Per-person slideshow logic
+        // Per-person slideshow logic (show only one photo at a time)
         function changePersonSlide(btn, n) {
             const container = btn.closest('.person-slideshow-container');
             if (!container) return;
@@ -1118,9 +1120,11 @@
             let current = slides.findIndex(slide => slide.classList.contains('active'));
             slides[current].classList.remove('active');
             dots[current].classList.remove('active');
+            slides[current].style.display = 'none';
             let next = (current + n + slides.length) % slides.length;
             slides[next].classList.add('active');
             dots[next].classList.add('active');
+            slides[next].style.display = 'flex';
         }
 
         function currentPersonSlide(dot, n) {
@@ -1131,8 +1135,10 @@
             let current = slides.findIndex(slide => slide.classList.contains('active'));
             slides[current].classList.remove('active');
             dots[current].classList.remove('active');
+            slides[current].style.display = 'none';
             slides[n-1].classList.add('active');
             dots[n-1].classList.add('active');
+            slides[n-1].style.display = 'flex';
         }
                 cardsHTML = `
                     <div class="message-card ${color}-message-card">

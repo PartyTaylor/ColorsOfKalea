@@ -1063,6 +1063,16 @@
                                 </div>
                             </div>
                         `;
+                        // Ensure only the first slide is visible on creation
+                        setTimeout(() => {
+                            const container = document.querySelectorAll('.person-slideshow-container');
+                            container.forEach(slideshow => {
+                                const slides = Array.from(slideshow.querySelectorAll('.person-slide'));
+                                slides.forEach((slide, idx) => {
+                                    slide.style.display = idx === 0 ? 'flex' : 'none';
+                                });
+                            });
+                        }, 0);
                     } else {
                         slideshowHTML = `
                             <div class="photo-placeholder ${color}-photo-placeholder">

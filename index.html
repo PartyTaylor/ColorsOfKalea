@@ -992,12 +992,16 @@
                         const response = await fetch(entry.color);
                         if (response.ok) {
                             loadedColor = (await response.text()).trim().toLowerCase();
+                            if (loadedColor === 'purple') loadedColor = 'violet';
                         } else {
                             loadedColor = '(color file not found)';
                         }
                     } catch (e) {
                         loadedColor = '(error loading color)';
                     }
+                } else if (typeof loadedColor === 'string') {
+                    loadedColor = loadedColor.trim().toLowerCase();
+                    if (loadedColor === 'purple') loadedColor = 'violet';
                 }
                 return { ...entry, _loadedColor: loadedColor };
             }));
@@ -1007,10 +1011,11 @@
 
             // Fetch messages if they are .txt files
             const messagePromises = filtered.map(async (match) => {
-                if (typeof match.message === 'string') {
+                if (typeof match.message === 'string' && match.message.endsWith('.txt')) {
                     try {
                         const response = await fetch(match.message);
                         if (response.ok) {
+                            // Preserve all whitespace and line breaks as in the file
                             match._loadedMessage = await response.text();
                         } else {
                             match._loadedMessage = '(Message file not found)';
@@ -1042,7 +1047,7 @@
                                 <div class="message-section ${color}-message-section">
                                     <div class="message-content">
                                         <h3 class="message-title">${colorData.messageIcon} A Special Message from ${match.name}</h3>
-                                        <p class="message-text ${color}-message-text">${messageContent}</p>
+                                        <pre class="message-text ${color}-message-text" style="white-space: pre-wrap; background: none; border: none; font-family: inherit; font-size: inherit; color: inherit; margin: 0; padding: 0;">${messageContent}</pre>
                                         <div class="message-signature">
                                             <p>With all our love,</p>
                                             <p style="font-weight: bold; margin-top: 5px;" class="${color}-signature">Your Amazing Friends & Family ${colorData.signatureIcon}</p>
@@ -1058,7 +1063,7 @@
                                 <div class="message-section ${color}-message-section">
                                     <div class="message-content">
                                         <h3 class="message-title">${colorData.messageIcon} A Special Message from ${match.name}</h3>
-                                        <p class="message-text ${color}-message-text">${messageContent}</p>
+                                        <pre class="message-text ${color}-message-text" style="white-space: pre-wrap; background: none; border: none; font-family: inherit; font-size: inherit; color: inherit; margin: 0; padding: 0;">${messageContent}</pre>
                                         <div class="message-signature">
                                             <p>With all our love,</p>
                                             <p style="font-weight: bold; margin-top: 5px;" class="${color}-signature">Your Amazing Friends & Family ${colorData.signatureIcon}</p>

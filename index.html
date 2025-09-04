@@ -384,8 +384,10 @@
 
         .content-grid {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
             margin: 40px 0;
+            gap: 32px;
         }
 
         .message-card {
@@ -994,7 +996,7 @@
                     <div class="message-card ${color}-message-card">
                         <div class="photo-section">
                             <div class="photo-placeholder ${color}-photo-placeholder">
-                                <div><img src="${match.photo}" alt="${match.name}'s ${color} Memory" /></div>
+                                <img src="${match.photo}" alt="${match.name}'s ${color} Memory" />
                             </div>
                         </div>
                         <div class="message-section ${color}-message-section">

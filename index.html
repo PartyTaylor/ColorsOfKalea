@@ -883,7 +883,7 @@
                 <div class="slide active">
                     <div class="slide-placeholder">
                         <img src="photos/Mai/1.jpg" alt="Mai's Blue Memory" />
-                        <p style="font-size: 0.9rem; opacity: 0.7; margin-top: 10px;"></p>
+                        <p style="font-size: 0.9rem; opacity: 0.7; margin-top: 10px;">Add your favorite memory here</p>
                     </div>
                     <div class="slide-caption">Kalea's Amazing Journey - Memory 1</div>
                     <div class="slide-number">1 / 5</div>
@@ -956,6 +956,23 @@
     </div>
 
     <script>
+        const photoFolders = [
+            {
+                name: "Mai",
+                color: "blue",
+                photo: "photos/Mai/1.jpg",
+                message: "Happy Birthday, Kalea! Love, Mai 💙"
+                // If you want to load from a file, you could use a fetch here instead
+            },
+            {
+                name: "Dave",
+                color: "blue",
+                photo: "photos/Dave/1.jpg",
+                message: "You are the best! Love, Taylor ❤️"
+            },
+            // Add more entries as needed
+        ];
+
         // Function to handle rainbow color clicks
         function navigateToColor(color) {
             showColorPage(color);
@@ -967,6 +984,17 @@
             document.querySelector('.container').style.display = 'none';
             
             const colorData = getColorData(color);
+
+            // Find the first photo/message for this color
+            const match = photoFolders.find(f => f.color === color);
+
+            let photoHTML = `<div><p>No photo for this color yet!</p></div>`;
+            let messageHTML = `<p class="message-text ${color}-message-text">No message for this color yet!</p>`;
+
+            if (match) {
+                photoHTML = `<div><img src="${match.photo}" alt="${match.name}'s ${color} Memory" /></div>`;
+                messageHTML = `<p class="message-text ${color}-message-text">${match.message}</p>`;
+            }
             
             // Create color page content
             const colorPageHTML = `
@@ -988,23 +1016,20 @@
                     <div class="content-grid">
                         <div class="message-card ${color}-message-card">
                             <div class="photo-section">
-                                <div class="photo-placeholder ${color}-photo-placeholder">
-                                    <div>
-                                        <img src="photos/Mai/1.jpg" alt="Mai's Blue Memory" />
-                                        <p style="font-size: 0.9rem; opacity: 0.7; margin-top: 10px;">Upload your ${color} memory</p>
-                                    </div>
+                            <div class="photo-placeholder ${color}-photo-placeholder">
+                                ${photoHTML}
+                            </div>
+                        </div>
+                        <div class="message-section ${color}-message-section">
+                            <div class="message-content">
+                                <h3 class="message-title">${colorData.messageIcon} A Special Message</h3>
+                                ${messageHTML}
+                                <div class="message-signature">
+                                    <p>With all our love,</p>
+                                    <p style="font-weight: bold; margin-top: 5px;" class="${color}-signature">Your Amazing Friends & Family ${colorData.signatureIcon}</p>
                                 </div>
                             </div>
-                            <div class="message-section ${color}-message-section">
-                                <div class="message-content">
-                                    <h3 class="message-title">${colorData.messageIcon} A Special Message</h3>
-                                    <p class="message-text ${color}-message-text">${colorData.message}</p>
-                                    <div class="message-signature">
-                                        <p>With all our love,</p>
-                                        <p style="font-weight: bold; margin-top: 5px;" class="${color}-signature">Your Amazing Friends & Family ${colorData.signatureIcon}</p>
-                                    </div>
-                                </div>
-                            </div>
+                        </div>
                         </div>
                     </div>
 

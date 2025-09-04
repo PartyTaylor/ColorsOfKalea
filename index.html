@@ -961,10 +961,9 @@
         const photoFolders = [
             {
                 name: "Mai",
-                color: "blue",
+                color: "photos/Mai/Color", // path to color file
                 photo: "photos/Mai/1.jpg",
-                message: "photos/Mai/Message" 
-                // If you want to load from a file, you could use a fetch here instead
+                message: "photos/Mai/Message"
             },
             {
                 name: "Dave",
@@ -985,13 +984,29 @@
             // Hide main content
             document.querySelector('.container').style.display = 'none';
 
-            const colorData = getColorData(color);
+            // Fetch color for each entry if it's a file path
+            const matches = await Promise.all(photoFolders.map(async (entry) => {
+                let loadedColor = entry.color;
+                if (typeof entry.color === 'string' && entry.color.startsWith('photos/') && !entry.color.endsWith('.jpg') && !entry.color.endsWith('.png')) {
+                    try {
+                        const response = await fetch(entry.color);
+                        if (response.ok) {
+                            loadedColor = (await response.text()).trim();
+                        } else {
+                            loadedColor = '(color file not found)';
+                        }
+                    } catch (e) {
+                        loadedColor = '(error loading color)';
+                    }
+                }
+                return { ...entry, _loadedColor: loadedColor };
+            }));
 
-            // Find all photo/message combos for this color
-            const matches = photoFolders.filter(f => f.color === color);
+            // Now filter by color argument (which is the color name)
+            const filtered = matches.filter(f => f._loadedColor === color);
 
             // Fetch messages if they are .txt files
-            const messagePromises = matches.map(async (match) => {
+            const messagePromises = filtered.map(async (match) => {
                 if (typeof match.message === 'string' && match.message.endsWith('.txt')) {
                     try {
                         const response = await fetch(match.message);
@@ -1009,9 +1024,11 @@
             });
             await Promise.all(messagePromises);
 
+            const colorData = getColorData(color);
+
             let cardsHTML = '';
-            if (matches.length > 0) {
-                cardsHTML = matches.map((match, idx) => {
+            if (filtered.length > 0) {
+                cardsHTML = filtered.map((match, idx) => {
                     const messageContent = match._loadedMessage || '';
                     if (idx % 2 === 0) {
                         // Photo left, message right

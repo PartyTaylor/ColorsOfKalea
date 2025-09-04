@@ -991,7 +991,7 @@
                     try {
                         const response = await fetch(entry.color);
                         if (response.ok) {
-                            loadedColor = (await response.text()).trim();
+                            loadedColor = (await response.text()).trim().toLowerCase();
                         } else {
                             loadedColor = '(color file not found)';
                         }

@@ -1007,7 +1007,7 @@
 
             // Fetch messages if they are .txt files
             const messagePromises = filtered.map(async (match) => {
-                if (typeof match.message === 'string' && match.message.endsWith('.txt')) {
+                if (typeof match.message === 'string') {
                     try {
                         const response = await fetch(match.message);
                         if (response.ok) {

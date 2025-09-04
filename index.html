@@ -963,7 +963,7 @@
                 name: "Mai",
                 color: "blue",
                 photo: "photos/Mai/1.jpg",
-                message: "Happy Birthday, Kalea! Love, Mai 💙"
+                message: "photos/Mai/Message.txt" 
                 // If you want to load from a file, you could use a fetch here instead
             },
             {
@@ -981,7 +981,7 @@
         }
 
         // Function to display any color page
-        function showColorPage(color) {
+        async function showColorPage(color) {
             // Hide main content
             document.querySelector('.container').style.display = 'none';
 
@@ -990,27 +990,73 @@
             // Find all photo/message combos for this color
             const matches = photoFolders.filter(f => f.color === color);
 
+            // Fetch messages if they are .txt files
+            const messagePromises = matches.map(async (match) => {
+                if (typeof match.message === 'string' && match.message.endsWith('.txt')) {
+                    try {
+                        const response = await fetch(match.message);
+                        if (response.ok) {
+                            match._loadedMessage = await response.text();
+                        } else {
+                            match._loadedMessage = '(Message file not found)';
+                        }
+                    } catch (e) {
+                        match._loadedMessage = '(Error loading message)';
+                    }
+                } else {
+                    match._loadedMessage = match.message;
+                }
+            });
+            await Promise.all(messagePromises);
+
             let cardsHTML = '';
             if (matches.length > 0) {
-                cardsHTML = matches.map(match => `
-                    <div class="message-card ${color}-message-card">
-                        <div class="photo-section">
-                            <div class="photo-placeholder ${color}-photo-placeholder">
-                                <img src="${match.photo}" alt="${match.name}'s ${color} Memory" />
-                            </div>
-                        </div>
-                        <div class="message-section ${color}-message-section">
-                            <div class="message-content">
-                                <h3 class="message-title">${colorData.messageIcon} A Special Message from ${match.name}</h3>
-                                <p class="message-text ${color}-message-text">${match.message}</p>
-                                <div class="message-signature">
-                                    <p>With all our love,</p>
-                                    <p style="font-weight: bold; margin-top: 5px;" class="${color}-signature">Your Amazing Friends & Family ${colorData.signatureIcon}</p>
+                cardsHTML = matches.map((match, idx) => {
+                    const messageContent = match._loadedMessage || '';
+                    if (idx % 2 === 0) {
+                        // Photo left, message right
+                        return `
+                            <div class="message-card ${color}-message-card">
+                                <div class="photo-section">
+                                    <div class="photo-placeholder ${color}-photo-placeholder">
+                                        <img src="${match.photo}" alt="${match.name}'s ${color} Memory" />
+                                    </div>
+                                </div>
+                                <div class="message-section ${color}-message-section">
+                                    <div class="message-content">
+                                        <h3 class="message-title">${colorData.messageIcon} A Special Message from ${match.name}</h3>
+                                        <p class="message-text ${color}-message-text">${messageContent}</p>
+                                        <div class="message-signature">
+                                            <p>With all our love,</p>
+                                            <p style="font-weight: bold; margin-top: 5px;" class="${color}-signature">Your Amazing Friends & Family ${colorData.signatureIcon}</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                `).join('');
+                        `;
+                    } else {
+                        // Message left, photo right
+                        return `
+                            <div class="message-card ${color}-message-card">
+                                <div class="message-section ${color}-message-section">
+                                    <div class="message-content">
+                                        <h3 class="message-title">${colorData.messageIcon} A Special Message from ${match.name}</h3>
+                                        <p class="message-text ${color}-message-text">${messageContent}</p>
+                                        <div class="message-signature">
+                                            <p>With all our love,</p>
+                                            <p style="font-weight: bold; margin-top: 5px;" class="${color}-signature">Your Amazing Friends & Family ${colorData.signatureIcon}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="photo-section">
+                                    <div class="photo-placeholder ${color}-photo-placeholder">
+                                        <img src="${match.photo}" alt="${match.name}'s ${color} Memory" />
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }).join('');
             } else {
                 cardsHTML = `
                     <div class="message-card ${color}-message-card">

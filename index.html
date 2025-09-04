@@ -982,20 +982,55 @@
         function showColorPage(color) {
             // Hide main content
             document.querySelector('.container').style.display = 'none';
-            
+
             const colorData = getColorData(color);
 
-            // Find the first photo/message for this color
-            const match = photoFolders.find(f => f.color === color);
+            // Find all photo/message combos for this color
+            const matches = photoFolders.filter(f => f.color === color);
 
-            let photoHTML = `<div><p>No photo for this color yet!</p></div>`;
-            let messageHTML = `<p class="message-text ${color}-message-text">No message for this color yet!</p>`;
-
-            if (match) {
-                photoHTML = `<div><img src="${match.photo}" alt="${match.name}'s ${color} Memory" /></div>`;
-                messageHTML = `<p class="message-text ${color}-message-text">${match.message}</p>`;
+            let cardsHTML = '';
+            if (matches.length > 0) {
+                cardsHTML = matches.map(match => `
+                    <div class="message-card ${color}-message-card">
+                        <div class="photo-section">
+                            <div class="photo-placeholder ${color}-photo-placeholder">
+                                <div><img src="${match.photo}" alt="${match.name}'s ${color} Memory" /></div>
+                            </div>
+                        </div>
+                        <div class="message-section ${color}-message-section">
+                            <div class="message-content">
+                                <h3 class="message-title">${colorData.messageIcon} A Special Message from ${match.name}</h3>
+                                <p class="message-text ${color}-message-text">${match.message}</p>
+                                <div class="message-signature">
+                                    <p>With all our love,</p>
+                                    <p style="font-weight: bold; margin-top: 5px;" class="${color}-signature">Your Amazing Friends & Family ${colorData.signatureIcon}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                cardsHTML = `
+                    <div class="message-card ${color}-message-card">
+                        <div class="photo-section">
+                            <div class="photo-placeholder ${color}-photo-placeholder">
+                                <div><p>No photo for this color yet!</p></div>
+                            </div>
+                        </div>
+                        <div class="message-section ${color}-message-section">
+                            <div class="message-content">
+                                <h3 class="message-title">${colorData.messageIcon} A Special Message</h3>
+                                <p class="message-text ${color}-message-text">No message for this color yet!</p>
+                                <div class="message-signature">
+                                    <p>With all our love,</p>
+                                    <p style="font-weight: bold; margin-top: 5px;" class="${color}-signature">Your Amazing Friends & Family ${colorData.signatureIcon}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
             }
-            
+
             // Create color page content
             const colorPageHTML = `
                 <div class="floating-elements" id="floating-elements-${color}"></div>
@@ -1014,23 +1049,7 @@
                     </div>
 
                     <div class="content-grid">
-                        <div class="message-card ${color}-message-card">
-                            <div class="photo-section">
-                            <div class="photo-placeholder ${color}-photo-placeholder">
-                                ${photoHTML}
-                            </div>
-                        </div>
-                        <div class="message-section ${color}-message-section">
-                            <div class="message-content">
-                                <h3 class="message-title">${colorData.messageIcon} A Special Message</h3>
-                                ${messageHTML}
-                                <div class="message-signature">
-                                    <p>With all our love,</p>
-                                    <p style="font-weight: bold; margin-top: 5px;" class="${color}-signature">Your Amazing Friends & Family ${colorData.signatureIcon}</p>
-                                </div>
-                            </div>
-                        </div>
-                        </div>
+                        ${cardsHTML}
                     </div>
 
                     <div class="quote-section ${color}-quote-section">
@@ -1039,13 +1058,13 @@
                     </div>
                 </div>
             `;
-            
+
             // Add color page content to body
             document.body.insertAdjacentHTML('beforeend', colorPageHTML);
-            
+
             // Change background
             document.body.style.background = colorData.background;
-            
+
             // Start floating animation
             createFloatingElements(color);
         }

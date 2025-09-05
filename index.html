@@ -1365,9 +1365,13 @@
 
         function showSlide(index) {
             const { slides, dots } = getSlidesAndDots();
-            slides.forEach(slide => {
+            slides.forEach(slide, i) => {
                 slide.classList.remove('active'));
-                slide.style.display = '';
+                if(i === index){
+                    slide.style.display = '';
+                }else{
+                    slide.style.display = 'none;'
+                }
             });
             dots.forEach(dot => dot.classList.remove('active'));
             if (slides[index]) {

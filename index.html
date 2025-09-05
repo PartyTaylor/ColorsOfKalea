@@ -1365,11 +1365,15 @@
 
         function showSlide(index) {
             const { slides, dots } = getSlidesAndDots();
-            slides.forEach(slide => slide.classList.remove('active'));
+            slides.forEach(slide => {
+                slide.classList.remove('active'));
+                slide.style.display = '';
+            });
             dots.forEach(dot => dot.classList.remove('active'));
             if (slides[index]) {
                 slides[index].classList.add('active');
                 dots[index].classList.add('active');
+                slides[index].style.display = '';
             }
         }
 

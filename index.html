@@ -1038,6 +1038,37 @@
             const colorData = getColorData(color);
 
             let cardsHTML = '';
+
+            // Per-person slideshow logic (show only one photo at a time)
+            window.changePersonSlide = function(btn, n) {
+                const container = btn.closest('.person-slideshow-container');
+                if (!container) return;
+                const slides = Array.from(container.querySelectorAll('.person-slide'));
+                const dots = Array.from(container.querySelectorAll('.person-dot'));
+                let current = slides.findIndex(slide => slide.classList.contains('active'));
+                slides[current].classList.remove('active');
+                dots[current].classList.remove('active');
+                slides[current].style.display = 'none';
+                let next = (current + n + slides.length) % slides.length;
+                slides[next].classList.add('active');
+                dots[next].classList.add('active');
+                slides[next].style.display = 'flex';
+            }
+
+            window.currentPersonSlide = function(dot, n) {
+                const container = dot.closest('.person-slideshow-container');
+                if (!container) return;
+                const slides = Array.from(container.querySelectorAll('.person-slide'));
+                const dots = Array.from(container.querySelectorAll('.person-dot'));
+                let current = slides.findIndex(slide => slide.classList.contains('active'));
+                slides[current].classList.remove('active');
+                dots[current].classList.remove('active');
+                slides[current].style.display = 'none';
+                slides[n-1].classList.add('active');
+                dots[n-1].classList.add('active');
+                slides[n-1].style.display = 'flex';
+            }
+
             if (filtered.length > 0) {
                 cardsHTML = filtered.map((match, idx) => {
                     const messageContent = match._loadedMessage || '';
@@ -1111,35 +1142,6 @@
                     }
                 }).join('');
             } else {
-        // Per-person slideshow logic (show only one photo at a time)
-        window.changePersonSlide = function(btn, n) {
-            const container = btn.closest('.person-slideshow-container');
-            if (!container) return;
-            const slides = Array.from(container.querySelectorAll('.person-slide'));
-            const dots = Array.from(container.querySelectorAll('.person-dot'));
-            let current = slides.findIndex(slide => slide.classList.contains('active'));
-            slides[current].classList.remove('active');
-            dots[current].classList.remove('active');
-            slides[current].style.display = 'none';
-            let next = (current + n + slides.length) % slides.length;
-            slides[next].classList.add('active');
-            dots[next].classList.add('active');
-            slides[next].style.display = 'flex';
-        }
-
-        window.currentPersonSlide = function(dot, n) {
-            const container = dot.closest('.person-slideshow-container');
-            if (!container) return;
-            const slides = Array.from(container.querySelectorAll('.person-slide'));
-            const dots = Array.from(container.querySelectorAll('.person-dot'));
-            let current = slides.findIndex(slide => slide.classList.contains('active'));
-            slides[current].classList.remove('active');
-            dots[current].classList.remove('active');
-            slides[current].style.display = 'none';
-            slides[n-1].classList.add('active');
-            dots[n-1].classList.add('active');
-            slides[n-1].style.display = 'flex';
-        }
                 cardsHTML = `
                     <div class="message-card ${color}-message-card">
                         <div class="photo-section">

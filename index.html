@@ -1077,11 +1077,13 @@
                     let slideshowHTML = '';
                     if (photoCount > 1) {
                         slideshowHTML = `
-                            <div class="photo-placeholder ${color}-photo-placeholder" style="padding:0; background:transparent; border:none; min-height:0;">
-                                <div class="person-slideshow-container" style="width:100%; position:relative;">
+                            <div class="photo-placeholder ${color}-photo-placeholder" style="padding:0; background:rgba(255,255,255,0.2); border:2px dashed #888; min-height:220px;">
+                                <div class="person-slideshow-container" style="width:100%; position:relative; min-height:200px; border:2px solid #FF6B35; background:rgba(255,255,255,0.15); border-radius:12px;">
                                     ${Array.from({length: photoCount}).map((_, i) => `
-                                        <div class="person-slide${i === 0 ? ' active' : ''}" style="display:${i === 0 ? 'flex' : 'none'}; align-items:center; justify-content:center; width:100%; height:auto;">
-                                            <img src="photos/${match.name}/${i+1}.jpg" alt="${match.name} photo ${i+1}" onerror="if (!this.dataset.jpegTried) { this.src=this.src.replace(/\\.jpg$/i, '.jpeg'); this.dataset.jpegTried='1'; } else if (!this.dataset.jpgTried) { this.src=this.src.replace(/\\.jpeg$/i, '.jpg'); this.dataset.jpgTried='1'; }" style="max-width:100%; max-height:280px; border-radius:16px; border:3px solid; border-color:inherit; box-shadow:0 4px 15px rgba(0,0,0,0.2);" />
+                                        <div class="person-slide${i === 0 ? ' active' : ''}" style="display:${i === 0 ? 'flex' : 'none'}; align-items:center; justify-content:center; width:100%; height:auto; min-height:180px;">
+                                            <img src="photos/${match.name}/${i+1}.jpg" alt="${match.name} photo ${i+1}" style="max-width:100%; max-height:180px; border-radius:16px; border:3px solid; border-color:inherit; box-shadow:0 4px 15px rgba(0,0,0,0.2); background:#fff;"
+                                                onerror="if (!this.dataset.jpegTried) { this.src=this.src.replace(/\\.jpg$/i, '.jpeg'); this.dataset.jpegTried='1'; } else if (!this.dataset.jpgTried) { this.src=this.src.replace(/\\.jpeg$/i, '.jpg'); this.dataset.jpgTried='1'; } else { this.style.display='none'; var msg=document.createElement('div'); msg.style.color='red'; msg.style.fontSize='1rem'; msg.style.textAlign='center'; msg.innerText='Image not found: photos/${match.name}/${i+1}.jpg'; this.parentNode.appendChild(msg); }"
+                                            />
                                         </div>
                                     `).join('')}
                                     <button class="person-prev-next person-prev" type="button" onclick="window.changePersonSlide && window.changePersonSlide(this, -1)" style="position:absolute; left:10px; top:50%; transform:translateY(-50%);">❮</button>

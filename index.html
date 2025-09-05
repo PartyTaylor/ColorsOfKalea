@@ -1054,7 +1054,7 @@
                 let current = slides.findIndex(slide => slide.classList.contains('active'));
                 slides[current].classList.remove('active');
                 dots[current].classList.remove('active');
-                slides[current].style.display = 'none';
+                slides[current].style.display = '';
                 let next = (current + n + slides.length) % slides.length;
                 slides[next].classList.add('active');
                 dots[next].classList.add('active');
@@ -1069,7 +1069,7 @@
                 let current = slides.findIndex(slide => slide.classList.contains('active'));
                 slides[current].classList.remove('active');
                 dots[current].classList.remove('active');
-                slides[current].style.display = 'none';
+                slides[current].style.display = '';
                 slides[n-1].classList.add('active');
                 dots[n-1].classList.add('active');
                 slides[n-1].style.display = 'flex';

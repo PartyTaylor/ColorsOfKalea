@@ -1080,13 +1080,13 @@
                             <div class="photo-placeholder ${color}-photo-placeholder" style="padding:0; background:rgba(255,255,255,0.2); border:2px dashed #888; min-height:220px;">
                                 <div class="person-slideshow-container" style="width:100%; position:relative; min-height:200px; border:2px solid #FF6B35; background:rgba(255,255,255,0.15); border-radius:12px;">
                                     ${Array.from({length: photoCount}).map((_, i) => `
-                                        <div class="person-slide${i === 0 ? ' active' : ''}" style="display:${i === 0 ? 'flex' : 'none'}; align-items:center; justify-content:center; width:100%; height:auto; min-height:180px;">
-                                            <div style="width:100%; display:flex; align-items:center; justify-content:center; flex-direction:column;">
-                                                <img src="photos/${match.name}/${i+1}.jpg" alt="${match.name} photo ${i+1}"
-                                                    style="max-width:100%; max-height:180px; border-radius:16px; border:3px solid; border-color:inherit; box-shadow:0 4px 15px rgba(0,0,0,0.2); background:#fff;"
-                                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-                                                />
-                                                <div style="display:none; color:red; font-size:1rem; text-align:center; padding:10px;">Image not found: photos/${match.name}/${i+1}.jpg</div>
+                                        <div class="person-slide${i === 0 ? ' active' : ''}" style="display:${i === 0 ? 'flex' : 'none'}; align-items:center; justify-content:center; width:100%; height:auto; min-height:180px; position:relative;">
+                                            <img src="photos/${match.name}/${i+1}.jpg" alt="${match.name} photo ${i+1}"
+                                                style="max-width:100%; max-height:180px; border-radius:16px; border:3px solid; border-color:inherit; box-shadow:0 4px 15px rgba(0,0,0,0.2); background:#fff; z-index:1;"
+                                                onerror="this.style.display='none'; this.parentNode.querySelector('.person-img-error').style.display='flex';"
+                                            />
+                                            <div class="person-img-error" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#fff; background:#c00; font-size:1.1rem; text-align:center; padding:18px 24px; border-radius:10px; z-index:2; box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+                                                Image not found: photos/${match.name}/${i+1}.jpg
                                             </div>
                                         </div>
                                     `).join('')}

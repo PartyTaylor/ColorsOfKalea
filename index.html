@@ -890,44 +890,33 @@
             <div class="slideshow-container" id="slideshow">
                 <div class="slide active">
                     <div class="slide-placeholder">
-                        <img src="photos/Kalea/1.jpg" alt="Mai's Blue Memory" />
+                        <img src="photos/Kalea/1.jpg" alt="Kaleas FrontPage Memory" />
+                        <p style="font-size: 0.9rem; opacity: 0.7; margin-top: 10px;">Add your favorite memory here</p>
                     </div>
                 </div>
                 
                 <div class="slide">
                     <div class="slide-placeholder">
-                        <p>📷 Photo Slot 2</p>
-                        <p style="font-size: 0.9rem; opacity: 0.7; margin-top: 10px;">Another beautiful moment</p>
+                        <img src="photos/Kalea/2.jpg" alt="Kaleas FrontPage Memory" />
                     </div>
-                    <div class="slide-caption">25 Years of Wonderful Memories - Memory 2</div>
-                    <div class="slide-number">2 / 5</div>
                 </div>
                 
                 <div class="slide">
                     <div class="slide-placeholder">
-                        <p>🎂 Photo Slot 3</p>
-                        <p style="font-size: 0.9rem; opacity: 0.7; margin-top: 10px;">Special celebration</p>
+                        <img src="photos/Kalea/3.jpg" alt="Kaleas FrontPage Memory" />
                     </div>
-                    <div class="slide-caption">Celebrating Life's Special Moments - Memory 3</div>
-                    <div class="slide-number">3 / 5</div>
                 </div>
                 
                 <div class="slide">
                     <div class="slide-placeholder">
-                        <p>🌟 Photo Slot 4</p>
-                        <p style="font-size: 0.9rem; opacity: 0.7; margin-top: 10px;">Shining bright moment</p>
+                        <img src="photos/Kalea/4.jpg" alt="Kaleas FrontPage Memory" />
                     </div>
-                    <div class="slide-caption">Kalea Shining Bright - Memory 4</div>
-                    <div class="slide-number">4 / 5</div>
                 </div>
                 
                 <div class="slide">
                     <div class="slide-placeholder">
-                        <p>💕 Photo Slot 5</p>
-                        <p style="font-size: 0.9rem; opacity: 0.7; margin-top: 10px;">Love and happiness</p>
+                        <img src="photos/Kalea/5.jpg" alt="Kaleas FrontPage Memory" />
                     </div>
-                    <div class="slide-caption">Surrounded by Love - Memory 5</div>
-                    <div class="slide-number">5 / 5</div>
                 </div>
                 
                 <button class="prev-next-buttons prev" onclick="changeSlide(-1)">❮</button>
@@ -1119,7 +1108,7 @@
                                 </div>
                                 <div class="message-section ${color}-message-section">
                                     <div class="message-content">
-                                        <h3 class="message-title">${colorData.messageIcon} From ${match.name}</h3>
+                                        <h3 class="message-title">${colorData.messageIcon} ${match.name}</h3>
                                         <span class="message-text ${color}-message-text" style="white-space: pre-wrap; border: none; font-family: inherit; font-size: inherit; margin: 0; padding: 0;">${messageContent}</span>
                                     </div>
                                 </div>
@@ -1371,22 +1360,21 @@
         });
 
         // Slideshow functionality
-        let slideIndex = 0;
-        let slideInterval;
-        const slides = document.querySelectorAll('.slide');
-        const dots = document.querySelectorAll('.dot');
-        const totalSlides = slides.length;
 
-        function initializeSlideshow() {
-            startAutoSlide();
+        let slideIndex = 0;
+        let slideInterval = null;
+
+        function getSlidesAndDots() {
+            return {
+                slides: document.querySelectorAll('.slide'),
+                dots: document.querySelectorAll('.dot'),
+            };
         }
 
         function showSlide(index) {
-            // Hide all slides
+            const { slides, dots } = getSlidesAndDots();
             slides.forEach(slide => slide.classList.remove('active'));
             dots.forEach(dot => dot.classList.remove('active'));
-            
-            // Show current slide
             if (slides[index]) {
                 slides[index].classList.add('active');
                 dots[index].classList.add('active');
@@ -1394,12 +1382,14 @@
         }
 
         function nextSlide() {
-            slideIndex = (slideIndex + 1) % totalSlides;
+            const { slides } = getSlidesAndDots();
+            slideIndex = (slideIndex + 1) % slides.length;
             showSlide(slideIndex);
         }
 
         function changeSlide(direction) {
-            slideIndex = (slideIndex + direction + totalSlides) % totalSlides;
+            const { slides } = getSlidesAndDots();
+            slideIndex = (slideIndex + direction + slides.length) % slides.length;
             showSlide(slideIndex);
             resetAutoSlide();
         }
@@ -1411,23 +1401,30 @@
         }
 
         function startAutoSlide() {
+            clearInterval(slideInterval);
             slideInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
         }
 
         function resetAutoSlide() {
             clearInterval(slideInterval);
-            startAutoSlide();
+            slideInterval = setInterval(nextSlide, 5000);
         }
 
-        // Pause slideshow on hover
-        document.querySelector('.slideshow-container').addEventListener('mouseenter', function() {
-            clearInterval(slideInterval);
-        });
-
-        // Resume slideshow when mouse leaves
-        document.querySelector('.slideshow-container').addEventListener('mouseleave', function() {
+        function initializeSlideshow() {
+            // Only add event listeners once
+            const container = document.querySelector('.slideshow-container');
+            if (!container._listenersAdded) {
+                container.addEventListener('mouseenter', function() {
+                    clearInterval(slideInterval);
+                });
+                container.addEventListener('mouseleave', function() {
+                    startAutoSlide();
+                });
+                container._listenersAdded = true;
+            }
+            showSlide(slideIndex);
             startAutoSlide();
-        });
+        }
 
         // Add some interactive effects
         document.querySelectorAll('.rainbow-band').forEach(band => {
